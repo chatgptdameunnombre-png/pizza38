@@ -567,9 +567,9 @@ class Component extends DCLogic {
     const cartCount = cartLines.reduce((n, l) => n + l.qty, 0);
     const cartTotal = Object.keys(cart).reduce((t, k) => t + cart[k].price * cart[k].qty, 0);
     const hasCart = cartCount > 0;
-    let waCart = this.waFor("Hola, quisiera hacer un pedido 🍕");
+    let waCart = this.waFor("Hola, quisiera hacer un pedido");
     if (hasCart) {
-      let msg = "Hola, quisiera pedir: 🍕\n";
+      let msg = "Hola, quisiera pedir:\n";
       Object.keys(cart).forEach((k) => {
         const l = cart[k];
         msg += "- " + l.qty + " " + l.name + (l.sizeLabel ? " (" + l.sizeLabel + ")" : "") + "\n";
@@ -579,7 +579,7 @@ class Component extends DCLogic {
 
     const reviews = this.reviews();
     return {
-      waOrder: this.waFor("Hola, quisiera hacer un pedido 🍕"),
+      waOrder: this.waFor("Hola, quisiera hacer un pedido"),
       videoRef: (el) => { if (el) { el.muted = true; el.defaultMuted = true; el.loop = true; el.setAttribute("muted", ""); const p = el.play(); if (p && p.catch) p.catch(() => {}); } },
       links: this.links(),
       categories,
