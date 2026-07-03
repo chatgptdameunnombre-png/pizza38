@@ -114,17 +114,17 @@
     </div>
 
     <!-- ===== TABS (categorías) ===== -->
-    <div data-reveal style="max-width: 1100px; margin: 0 auto 20px;">
+    <div data-reveal style="max-width: 1240px; margin: 0 auto 20px;">
       <div data-r="tabs" style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 14px; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab;">
         <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="7">
-          <button onClick="{{ cat.onClick }}" style="flex: none; cursor: pointer; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: {{ cat.color }}; background: {{ cat.bg }}; border: 1px solid {{ cat.border }}; padding: 10px 18px; border-radius: 999px; white-space: nowrap; transition: all .2s ease;" style-hover="border-color: #e2231a; color: #fff; box-shadow: 0 0 16px rgba(226,35,26,0.35);">{{ cat.label }}</button>
+          <button onClick="{{ cat.onClick }}" style="flex: none; cursor: pointer; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14.5px; letter-spacing: 0.06em; text-transform: uppercase; color: {{ cat.color }}; background: {{ cat.bg }}; border: 1px solid {{ cat.border }}; padding: 13px 24px; border-radius: 999px; white-space: nowrap; transition: all .2s ease;" style-hover="border-color: #e2231a; color: #fff; box-shadow: 0 0 16px rgba(226,35,26,0.35);">{{ cat.label }}</button>
         </sc-for>
         <span style="flex: none; display: inline-flex; align-items: center; gap: 10px; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a8a29e; background: #17150f; border: 1px dashed rgba(226,35,26,0.5); padding: 8px 16px; border-radius: 999px; white-space: nowrap; line-height: 1.25;"><span style="color:#e2231a; font-size: 17px;">☝</span><span>Toca una categoría<br>para desplegar el menú</span></span>
       </div>
     </div>
 
     <!-- ===== CONTENIDO ===== -->
-    <div style="max-width: 1100px; margin: 0 auto;">
+    <div style="max-width: 1240px; margin: 0 auto;">
       <!-- sin seleccionar: 2 videos + guía -->
       <sc-if value="{{ showVideo }}" hint-placeholder-val="{{ true }}">
         <div>
@@ -148,23 +148,23 @@
 
       <!-- con categoría: tarjetas -->
       <sc-if value="{{ showItems }}" hint-placeholder-val="">
-        <div style="background: #100f0d; border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 26px 28px;">
+        <div style="background: #100f0d; border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 30px 32px;">
           <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px;">
-            <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(26px, 3vw, 40px); text-transform: uppercase; color: #fff;">{{ activeLabel }}</h3>
+            <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(28px, 3vw, 44px); text-transform: uppercase; color: #fff;">{{ activeLabel }}</h3>
           </div>
           <sc-if value="{{ activeNote }}" hint-placeholder-val="">
-            <div style="font-family: 'Archivo', sans-serif; font-size: 13px; color: #78716c; margin-bottom: 18px;">{{ activeNote }}</div>
+            <div style="font-family: 'Archivo', sans-serif; font-size: 13.5px; color: #78716c; margin-bottom: 20px;">{{ activeNote }}</div>
           </sc-if>
-          <div data-r="cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div data-r="cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
             <sc-for list="{{ items }}" as="item" hint-placeholder-count="6">
-              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 13px 15px;">
-                <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; text-transform: uppercase; color: #fff; letter-spacing: 0.01em;">{{ item.name }}</div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 17px 18px;">
+                <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 18px; text-transform: uppercase; color: #fff; letter-spacing: 0.01em;">{{ item.name }}</div>
                 <sc-if value="{{ item.desc }}" hint-placeholder-val="">
-                  <div style="font-family: 'Archivo', sans-serif; font-size: 12px; color: #78716c; margin-top: 3px; line-height: 1.35;">{{ item.desc }}</div>
+                  <div style="font-family: 'Archivo', sans-serif; font-size: 12.5px; color: #78716c; margin-top: 4px; line-height: 1.35;">{{ item.desc }}</div>
                 </sc-if>
-                <div style="display: flex; gap: 6px; margin-top: 11px;">
+                <div style="display: flex; gap: 8px; margin-top: 14px;">
                   <sc-for list="{{ item.buttons }}" as="btn" hint-placeholder-count="1">
-                    <button onClick="{{ btn.onClick }}" style="flex: 1; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: 'Oswald', sans-serif; font-weight: 600; color: #d6d3d1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18); border-radius: 7px; padding: 7px 4px; transition: all .18s ease;" style-hover="background: rgba(226,35,26,0.16); border-color: #e2231a; color: #fff; box-shadow: 0 0 14px rgba(226,35,26,0.4);"><span style="font-size: 11px; letter-spacing: 0.03em; opacity: 0.85;">{{ btn.size }}</span><span style="font-size: 15px; color: #e2231a;">{{ btn.price }}</span></button>
+                    <button onClick="{{ btn.onClick }}" style="flex: 1; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: 'Oswald', sans-serif; font-weight: 600; color: #d6d3d1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; padding: 11px 6px; transition: all .18s ease;" style-hover="background: rgba(226,35,26,0.16); border-color: #e2231a; color: #fff; box-shadow: 0 0 14px rgba(226,35,26,0.4);"><span style="font-size: 12.5px; letter-spacing: 0.03em; opacity: 0.85;">{{ btn.size }}</span><span style="font-size: 19px; color: #e2231a;">{{ btn.price }}</span></button>
                   </sc-for>
                 </div>
               </div>
@@ -176,7 +176,7 @@
 
     <!-- ===== BARRA DE PEDIDO (solo cantidad) ===== -->
     <sc-if value="{{ hasCart }}" hint-placeholder-val="">
-      <div style="max-width: 1100px; margin: 22px auto 0; background: #17150f; border: 1.5px solid rgba(226,35,26,0.4); border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(226,35,26,0.15);">
+      <div style="max-width: 1240px; margin: 22px auto 0; background: #17150f; border: 1.5px solid rgba(226,35,26,0.4); border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(226,35,26,0.15);">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap;">
           <div style="font-family: 'Anton', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff;">Tu pedido <span style="color:#e2231a;">· {{ cartCountLabel }}</span></div>
           <button onClick="{{ clearCart }}" style="cursor: pointer; background: transparent; border: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #78716c; transition: color .2s;" style-hover="color: #e2231a;">Vaciar</button>
