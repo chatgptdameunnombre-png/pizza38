@@ -24,6 +24,8 @@
   html { scroll-behavior: smooth; }
   body { margin: 0; background: #0c0b0a; }
   ::selection { background: #e2231a; color: #fff; }
+  [data-r="tabs"]::-webkit-scrollbar { display: none; }
+  [data-r="tabs"] { scrollbar-width: none; }
   @keyframes p38marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   /* reveal al hacer scroll lo maneja el JS (componentDidMount) de forma robusta */
   @media (max-width: 980px) {
@@ -37,6 +39,9 @@
     [data-r="apps"] { gap: 16px !important; }
   }
   @media (max-width: 560px) {
+    [data-r="vids"] { grid-template-columns: 1fr !important; }
+    [data-r="vid2"] { display: none !important; }
+    [data-r="cards"] { grid-template-columns: 1fr !important; }
     [data-r="local"] { grid-template-columns: 1fr !important; }
     [data-r="apps"] { flex-direction: column !important; align-items: stretch !important; }
   }
@@ -108,59 +113,94 @@
       <div style="width: 64px; height: 3px; background: #e2231a; margin: 0 auto;"></div>
     </div>
 
-    <div data-reveal data-r="menu" style="display: grid; grid-template-columns: 300px 1fr; gap: 34px; max-width: 1200px; margin: 0 auto; align-items: start;">
-      <!-- categorías -->
-      <div data-r="cats" style="display: flex; flex-direction: column; gap: 12px;">
-        <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="4">
-          <button onClick="{{ cat.onClick }}" style="text-align: left; cursor: pointer; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(26px, 2.4vw, 34px); text-transform: uppercase; letter-spacing: 0.01em; padding: 16px 20px; border-radius: 4px; transition: all .25s ease; border: 0; border-left: 4px solid {{ cat.bar }}; background: {{ cat.bg }}; color: {{ cat.color }};" style-hover="background: rgba(226,35,26,0.14); color: #fff; box-shadow: 0 0 22px rgba(226,35,26,0.4), inset 0 0 0 1px rgba(226,35,26,0.5);">{{ cat.label }}</button>
+    <!-- ===== TABS (categorías) ===== -->
+    <div data-reveal style="max-width: 1100px; margin: 0 auto 20px;">
+      <div data-r="tabs" style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 14px; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab;">
+        <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="7">
+          <button onClick="{{ cat.onClick }}" style="flex: none; cursor: pointer; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: {{ cat.color }}; background: {{ cat.bg }}; border: 1px solid {{ cat.border }}; padding: 10px 18px; border-radius: 999px; white-space: nowrap; transition: all .2s ease;" style-hover="border-color: #e2231a; color: #fff; box-shadow: 0 0 16px rgba(226,35,26,0.35);">{{ cat.label }}</button>
         </sc-for>
-        <div style="font-family: 'Archivo', sans-serif; font-size: 13px; color: #57534e; line-height: 1.5; margin-top: 10px; padding: 0 20px;">Toca una categoría para ver precios. Cada platillo abre WhatsApp listo para pedir.</div>
-      </div>
-
-      <!-- panel derecho -->
-      <div style="min-height: 540px; background: #131110; border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;">
-        <sc-if value="{{ showVideo }}" hint-placeholder-val="{{ true }}">
-          <div style="position: relative; flex: 1; min-height: 540px;">
-            <video ref="{{ videoRef }}" autoplay loop muted playsinline preload="auto" style="position:absolute; inset:0; width: 100%; height: 100%; object-fit: cover; display: block;">
-              <source src="assets/reel.mp4" type="video/mp4">
-            </video>
-            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(12,11,10,0.1) 40%, rgba(12,11,10,0.85) 100%); pointer-events: none;"></div>
-            <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 30px; pointer-events: none;">
-              <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase; color: #f87171; margin-bottom: 8px;">Hechas al momento</div>
-              <div style="font-family: 'Anton', sans-serif; font-size: clamp(24px, 2.6vw, 36px); text-transform: uppercase; color: #fff; line-height: 1;">Selecciona una categoría →</div>
-            </div>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ showItems }}" hint-placeholder-val="">
-          <div style="padding: 30px 34px;">
-            <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px;">
-              <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(30px, 3vw, 44px); text-transform: uppercase; color: #fff;">{{ activeLabel }}</h3>
-            </div>
-            <sc-if value="{{ activeNote }}" hint-placeholder-val="">
-              <div style="font-family: 'Archivo', sans-serif; font-style: italic; font-size: 14px; color: #78716c; margin-bottom: 18px;">{{ activeNote }}</div>
-            </sc-if>
-            <div>
-              <sc-for list="{{ items }}" as="item" hint-placeholder-count="8">
-                <a href="{{ item.waLink }}" target="_blank" style="display: flex; align-items: flex-start; gap: 18px; padding: 15px 12px; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.08); transition: all .2s ease;" style-hover="background: rgba(226,35,26,0.1); padding-left: 18px; box-shadow: inset 0 0 18px rgba(226,35,26,0.25);">
-                  <div style="flex: 1; min-width: 0;">
-                    <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: clamp(16px, 1.5vw, 20px); letter-spacing: 0.02em; text-transform: uppercase; color: #fafaf9;">{{ item.name }}</div>
-                    <sc-if value="{{ item.desc }}" hint-placeholder-val="">
-                      <div style="font-family: 'Archivo', sans-serif; font-size: 13px; color: #78716c; margin-top: 3px;">{{ item.desc }}</div>
-                    </sc-if>
-                  </div>
-                  <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; white-space: nowrap;">
-                    <sc-for list="{{ item.prices }}" as="pr" hint-placeholder-count="1">
-                      <div style="font-family: 'Oswald', sans-serif; font-size: 15px; color: #a8a29e; letter-spacing: 0.02em;"><span style="text-transform: uppercase; font-size: 12px; color: #78716c; margin-right: 8px;">{{ pr.label }}</span><span style="font-weight: 600; color: #e2231a; font-size: 18px;">{{ pr.value }}</span></div>
-                    </sc-for>
-                  </div>
-                </a>
-              </sc-for>
-            </div>
-          </div>
-        </sc-if>
+        <span style="flex: none; display: inline-flex; align-items: center; gap: 10px; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a8a29e; background: #17150f; border: 1px dashed rgba(226,35,26,0.5); padding: 8px 16px; border-radius: 999px; white-space: nowrap; line-height: 1.25;"><span style="color:#e2231a; font-size: 17px;">☝</span><span>Toca una categoría<br>para desplegar el menú</span></span>
       </div>
     </div>
+
+    <!-- ===== CONTENIDO ===== -->
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <!-- sin seleccionar: 2 videos + guía -->
+      <sc-if value="{{ showVideo }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div data-r="vids" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; background: #131110; border: 1px solid rgba(255,255,255,0.09);">
+              <video ref="{{ videoRef }}" loop muted playsinline preload="auto" style="position:absolute; inset:0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="assets/reel.mp4" type="video/mp4">
+              </video>
+              <span style="position:absolute; top:12px; left:14px; font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.45); padding:5px 10px; border-radius:6px;">@pizza38.gdl</span>
+            </div>
+            <div data-r="vid2" style="position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; background: #131110; border: 1px solid rgba(255,255,255,0.09);">
+              <video ref="{{ videoRef }}" loop muted playsinline preload="auto" style="position:absolute; inset:0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="assets/reel2.mp4" type="video/mp4">
+              </video>
+              <span style="position:absolute; top:12px; left:14px; font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.45); padding:5px 10px; border-radius:6px;">@pizza38.gdl</span>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 26px; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: clamp(15px, 1.6vw, 19px); letter-spacing: 0.06em; text-transform: uppercase; color: #a8a29e;">Selecciona una categoría <span style="color:#e2231a;">para ver los platillos</span> y arma tu pedido</div>
+        </div>
+      </sc-if>
+
+      <!-- con categoría: tarjetas -->
+      <sc-if value="{{ showItems }}" hint-placeholder-val="">
+        <div style="background: #100f0d; border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 26px 28px;">
+          <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px;">
+            <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(26px, 3vw, 40px); text-transform: uppercase; color: #fff;">{{ activeLabel }}</h3>
+          </div>
+          <sc-if value="{{ activeNote }}" hint-placeholder-val="">
+            <div style="font-family: 'Archivo', sans-serif; font-size: 13px; color: #78716c; margin-bottom: 18px;">{{ activeNote }}</div>
+          </sc-if>
+          <div data-r="cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <sc-for list="{{ items }}" as="item" hint-placeholder-count="6">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 13px 15px;">
+                <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; text-transform: uppercase; color: #fff; letter-spacing: 0.01em;">{{ item.name }}</div>
+                <sc-if value="{{ item.desc }}" hint-placeholder-val="">
+                  <div style="font-family: 'Archivo', sans-serif; font-size: 12px; color: #78716c; margin-top: 3px; line-height: 1.35;">{{ item.desc }}</div>
+                </sc-if>
+                <div style="display: flex; gap: 6px; margin-top: 11px;">
+                  <sc-for list="{{ item.buttons }}" as="btn" hint-placeholder-count="1">
+                    <button onClick="{{ btn.onClick }}" style="flex: 1; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: 'Oswald', sans-serif; font-weight: 600; color: #d6d3d1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18); border-radius: 7px; padding: 7px 4px; transition: all .18s ease;" style-hover="background: rgba(226,35,26,0.16); border-color: #e2231a; color: #fff; box-shadow: 0 0 14px rgba(226,35,26,0.4);"><span style="font-size: 11px; letter-spacing: 0.03em; opacity: 0.85;">{{ btn.size }}</span><span style="font-size: 15px; color: #e2231a;">{{ btn.price }}</span></button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- ===== BARRA DE PEDIDO (solo cantidad) ===== -->
+    <sc-if value="{{ hasCart }}" hint-placeholder-val="">
+      <div style="max-width: 1100px; margin: 22px auto 0; background: #17150f; border: 1.5px solid rgba(226,35,26,0.4); border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(226,35,26,0.15);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap;">
+          <div style="font-family: 'Anton', sans-serif; font-size: 22px; text-transform: uppercase; color: #fff;">Tu pedido <span style="color:#e2231a;">· {{ cartCountLabel }}</span></div>
+          <button onClick="{{ clearCart }}" style="cursor: pointer; background: transparent; border: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #78716c; transition: color .2s;" style-hover="color: #e2231a;">Vaciar</button>
+        </div>
+        <div style="padding: 6px 20px;">
+          <sc-for list="{{ cartLines }}" as="line" hint-placeholder-count="2">
+            <div style="display: flex; align-items: center; gap: 16px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <div style="flex: 1; min-width: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; text-transform: uppercase; color: #fafaf9;">{{ line.label }}</div>
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <button onClick="{{ line.dec }}" aria-label="Quitar uno" style="cursor: pointer; width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; font-family: 'Oswald', sans-serif; font-size: 17px; line-height: 1; transition: all .18s;" style-hover="border-color:#e2231a; background: rgba(226,35,26,0.15);">−</button>
+                <span style="min-width: 20px; text-align: center; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: #fff;">{{ line.qty }}</span>
+                <button onClick="{{ line.inc }}" aria-label="Agregar uno" style="cursor: pointer; width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; font-family: 'Oswald', sans-serif; font-size: 17px; line-height: 1; transition: all .18s;" style-hover="border-color:#e2231a; background: rgba(226,35,26,0.15);">+</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding: 14px 20px; background: rgba(226,35,26,0.06);">
+          <a href="{{ waCart }}" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #04210f; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 28px; border-radius: 6px; text-decoration: none; transition: all .2s;" style-hover="background: #1fb855; transform: translateY(-3px); box-shadow: 0 0 24px rgba(37,211,102,0.5);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#04210f"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.042zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            Enviar pedido
+          </a>
+        </div>
+      </div>
+    </sc-if>
   </section>
 
   <!-- ===================== DOMICILIO ===================== -->
@@ -281,10 +321,34 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { tab: null };
+  state = { tab: null, cart: {} };
 
   get WA() { return "523337029955"; }
   waFor(text) { return "https://wa.me/" + this.WA + "?text=" + encodeURIComponent(text); }
+
+  money(n) { return "$" + n.toFixed(0); }
+
+  addToCart(name, sizeLabel, price) {
+    const key = name + (sizeLabel ? " · " + sizeLabel : "");
+    this.setState((s) => {
+      const cart = Object.assign({}, s.cart);
+      const line = cart[key] ? Object.assign({}, cart[key]) : { name, sizeLabel, price, qty: 0 };
+      line.qty += 1;
+      cart[key] = line;
+      return { cart };
+    });
+  }
+  decFromCart(key) {
+    this.setState((s) => {
+      const cart = Object.assign({}, s.cart);
+      if (!cart[key]) return { cart };
+      const line = Object.assign({}, cart[key]);
+      line.qty -= 1;
+      if (line.qty <= 0) delete cart[key]; else cart[key] = line;
+      return { cart };
+    });
+  }
+  clearCart() { this.setState({ cart: {} }); }
 
   links() {
     return {
@@ -294,57 +358,82 @@ class Component extends DCLogic {
   }
 
   menu() {
-    const sz = (a, b) => b ? [{ label: "38 cm", value: a }, { label: "45 cm", value: b }] : [{ label: "38 cm", value: a }];
-    const one = (v) => [{ label: "", value: v }];
+    // p3 = tres tamaños [26, 38, 45]; p2 = [38, 45]; p1 = precio único
+    const p3 = (a, b, c) => [{ label: "26cm", price: a }, { label: "38cm", price: b }, { label: "45cm", price: c }];
+    const p2 = (a, b) => [{ label: "38cm", price: a }, { label: "45cm", price: b }];
+    const p1 = (a, lbl) => [{ label: lbl || "", price: a }];
     return {
       pizza: {
-        label: "Pizza",
-        note: "Pizzas de 38 cm (8 rebanadas) y 45 cm especial (solo mostrador).",
+        label: "Pizzas",
+        note: "8 rebanadas · elige tamaño: 26 individual · 38 usual · 45 especial.",
         items: [
-          { name: "Pepperoni", prices: sz("$180", "$360") },
-          { name: "Queso", prices: sz("$180") },
-          { name: "Hawaiana", prices: sz("$210", "$420") },
-          { name: "Champiñones", prices: sz("$210", "$420") },
-          { name: "Vegetales", prices: sz("$210", "$420") },
-          { name: "Margarita", prices: sz("$230", "$460") },
-          { name: "Blanca", prices: sz("$230") },
-          { name: "Manzana Tocino", prices: sz("$250", "$500") },
-          { name: "4 Carnes", prices: sz("$280") },
-          { name: "Mexicana", prices: sz("$280", "$500") },
-          { name: "Pastor", prices: sz("$280", "$500") },
-          { name: "Camarón", prices: sz("$290") },
-          { name: "Española", prices: sz("$350") },
+          { name: "Pepperoni", prices: p3(90, 199, 398) },
+          { name: "Queso", prices: p3(90, 199, 398) },
+          { name: "Hawaiana", prices: p3(115, 230, 460) },
+          { name: "Champiñones", prices: p3(115, 230, 460) },
+          { name: "Vegetales", prices: p3(115, 230, 460) },
+          { name: "Margarita", prices: p3(125, 250, 500) },
+          { name: "Manzana Tocino", prices: p3(140, 280, 550) },
+        ],
+      },
+      especialidades: {
+        label: "Especialidades",
+        note: "Pizzas de 4 carnes y gourmet · 26 / 38 / 45 cm.",
+        items: [
+          { name: "Mexicana", prices: p3(150, 295, 550) },
+          { name: "Pastor", prices: p3(150, 295, 550) },
+          { name: "Chicharrón", prices: p3(150, 295, 550) },
+          { name: "Camarón", prices: p3(170, 310, 550) },
+          { name: "Española", prices: p3(250, 390, 600) },
+        ],
+      },
+      orillas: {
+        label: "Orillas y extras",
+        note: "Las orillas se agregan a tu pizza. Extras por ingrediente.",
+        items: [
+          { name: "Orilla de queso", prices: p2(80, 160) },
+          { name: "Dedos de queso", prices: p2(95, 190) },
+          { name: "Extra vegetales / salsa", desc: "Piña, aceitunas, cebolla, morrones, champiñones, salsa, jalapeños", prices: p1(30) },
+          { name: "Extra carne / queso", desc: "Queso, jamón, tocino, pepperoni", prices: p1(40) },
+          { name: "Extra premium", desc: "Jamón serrano, camarones", prices: p1(120) },
         ],
       },
       pasta: {
-        label: "Pasta",
-        note: "Pastas y ensalada, porción individual.",
+        label: "Pastas",
+        note: "Porción individual.",
         items: [
-          { name: "Spaguetti Pomodoro", desc: "Salsa de jitomate", prices: one("$130") },
-          { name: "Fettucini Alfredo", desc: "Salsa cremosa", prices: one("$160") },
-          { name: "Ensalada Mediterránea", prices: one("$160") },
-          { name: "Spaguetti Boloñesa", desc: "Carne y jitomate", prices: one("$180") },
-          { name: "Lasaña", desc: "Chica", prices: one("$200") },
-          { name: "Lasaña", desc: "Grande", prices: one("$280") },
+          { name: "Spaguetti Pomodoro", desc: "Salsa de jitomate", prices: p1(130) },
+          { name: "Spaguetti Boloñesa", desc: "Carne y jitomate", prices: p1(190) },
+          { name: "Fettuccini Alfredo", desc: "Salsa cremosa", prices: p1(180) },
+          { name: "Ensalada Mediterránea", prices: p1(180) },
+          { name: "Lasaña chica", prices: p1(220) },
+          { name: "Lasaña grande", prices: p1(300) },
+        ],
+      },
+      complementos: {
+        label: "Rollitos y calzone",
+        note: "Ingrediente extra se cobra aparte.",
+        items: [
+          { name: "Rollitos de pizza", desc: "Pepperoni, Hawaiano o Salami", prices: p1(60) },
+          { name: "Calzone Individual", prices: p1(115) },
+          { name: "Calzone Grande", prices: p1(230) },
         ],
       },
       paquetes: {
         label: "Paquetes",
         note: "",
         items: [
-          { name: "Familiar 1", desc: "Pizza 38 Pepperoni + Spaguetti + Ensalada", prices: one("$400") },
-          { name: "Familiar 2", desc: "Pizza 38 Pepperoni + Lasaña Grande", prices: one("$420") },
-          { name: "Individual", desc: "Pizza 26 Pepperoni + bebida · solo mostrador", prices: one("$99") },
+          { name: "Paquete Individual", desc: "Pizza 26 Pepperoni + queso o jamón + bebida", prices: p1(110) },
+          { name: "Paquete 1", desc: "Pizza 38 Pepperoni + lasaña grande", prices: p1(480) },
+          { name: "Paquete 2", desc: "Pizza 38 Pepperoni + espagueti + ensalada", prices: p1(450) },
         ],
       },
-      extras: {
-        label: "Extras",
-        note: "Se agregan por pizza.",
+      bebidas: {
+        label: "Bebidas",
+        note: "",
         items: [
-          { name: "Vegetales / salsa", desc: "Piña, aceituna, cebolla, morrones, champiñones, jitomate, jalapeño", prices: one("$25 c/u") },
-          { name: "Queso extra", prices: one("$35") },
-          { name: "Orilla de queso", desc: "El favorito de la casa", prices: one("$50") },
-          { name: "Jamón serrano / camarones", prices: one("$100 c/u") },
+          { name: "Refresco", prices: p1(28) },
+          { name: "Cerveza", prices: p1(40) },
         ],
       },
     };
@@ -394,6 +483,34 @@ class Component extends DCLogic {
       setTimeout(() => hidden.forEach(show), 1600);
     }
 
+    // === tabs: arrastrar con dedo/mouse + nudge inicial en móvil ===
+    const tabs = document.querySelector('[data-r="tabs"]');
+    if (tabs) {
+      let down = false, startX = 0, startScroll = 0, moved = false;
+      const onDown = (e) => { down = true; moved = false; startX = (e.touches ? e.touches[0].clientX : e.clientX); startScroll = tabs.scrollLeft; tabs.style.cursor = "grabbing"; };
+      const onMove = (e) => { if (!down) return; const x = (e.touches ? e.touches[0].clientX : e.clientX); const dx = x - startX; if (Math.abs(dx) > 4) moved = true; tabs.scrollLeft = startScroll - dx; };
+      const onUp = () => { down = false; tabs.style.cursor = "grab"; };
+      tabs.addEventListener("mousedown", onDown);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+      tabs.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+      const isTouch = window.matchMedia && window.matchMedia("(max-width: 980px)").matches;
+      if (isTouch && tabs.scrollWidth > tabs.clientWidth + 20) {
+        setTimeout(() => {
+          const max = Math.min(90, tabs.scrollWidth - tabs.clientWidth);
+          let t0 = null; const dur = 1400;
+          const step = (ts) => {
+            if (t0 == null) t0 = ts;
+            const p = Math.min(1, (ts - t0) / dur);
+            const ease = p < 0.5 ? (p * 2) : (1 - (p - 0.5) * 2);
+            tabs.scrollLeft = max * ease;
+            if (p < 1) requestAnimationFrame(step); else tabs.scrollLeft = 0;
+          };
+          requestAnimationFrame(step);
+        }, 700);
+      }
+    }
+
     const frame = document.querySelector("iframe[data-mapsrc]");
     if (frame) {
       const mio = new IntersectionObserver((entries) => {
@@ -410,28 +527,59 @@ class Component extends DCLogic {
 
   renderVals() {
     const menu = this.menu();
-    const order = ["pizza", "pasta", "paquetes", "extras"];
+    const order = ["pizza", "especialidades", "orillas", "pasta", "complementos", "paquetes", "bebidas"];
     const active = this.state.tab;
     const categories = order.map((id) => {
       const isOn = id === active;
       return {
         label: menu[id].label,
         onClick: () => this.setState({ tab: isOn ? null : id }),
-        bg: isOn ? "rgba(226,35,26,0.15)" : "rgba(255,255,255,0.03)",
-        color: isOn ? "#fff" : "#a8a29e",
-        bar: isOn ? "#e2231a" : "transparent",
+        bg: isOn ? "#e2231a" : "#17150f",
+        color: isOn ? "#fff" : "#d6d3d1",
+        border: isOn ? "#e2231a" : "rgba(255,255,255,0.14)",
       };
     });
     const cur = active ? menu[active] : null;
     const items = cur ? cur.items.map((it) => ({
       name: it.name,
       desc: it.desc || "",
-      prices: it.prices,
-      waLink: this.waFor("Hola, quiero pedir: " + it.name + " 🍕"),
+      multi: it.prices.length > 1,
+      buttons: it.prices.map((pr) => ({
+        size: pr.label || "",
+        price: this.money(pr.price),
+        onClick: () => this.addToCart(it.name, pr.label, pr.price),
+      })),
     })) : [];
+
+    // === carrito ===
+    const cart = this.state.cart || {};
+    const cartLines = Object.keys(cart).map((key) => {
+      const l = cart[key];
+      return {
+        key,
+        label: l.name + (l.sizeLabel ? " · " + l.sizeLabel : ""),
+        qty: l.qty,
+        sub: this.money(l.price * l.qty),
+        inc: () => this.addToCart(l.name, l.sizeLabel, l.price),
+        dec: () => this.decFromCart(key),
+      };
+    });
+    const cartCount = cartLines.reduce((n, l) => n + l.qty, 0);
+    const cartTotal = Object.keys(cart).reduce((t, k) => t + cart[k].price * cart[k].qty, 0);
+    const hasCart = cartCount > 0;
+    let waCart = this.waFor("Hola, quisiera hacer un pedido 🍕");
+    if (hasCart) {
+      let msg = "Hola, quisiera pedir: 🍕\n";
+      Object.keys(cart).forEach((k) => {
+        const l = cart[k];
+        msg += "- " + l.qty + " " + l.name + (l.sizeLabel ? " (" + l.sizeLabel + ")" : "") + "\n";
+      });
+      waCart = this.waFor(msg);
+    }
+
     const reviews = this.reviews();
     return {
-      waOrder: this.waFor("Hola, quiero hacer un pedido 🍕"),
+      waOrder: this.waFor("Hola, quisiera hacer un pedido 🍕"),
       videoRef: (el) => { if (el) { el.muted = true; el.defaultMuted = true; el.loop = true; el.setAttribute("muted", ""); const p = el.play(); if (p && p.catch) p.catch(() => {}); } },
       links: this.links(),
       categories,
@@ -440,6 +588,13 @@ class Component extends DCLogic {
       activeLabel: cur ? cur.label : "",
       activeNote: cur ? cur.note : "",
       items,
+      cartLines,
+      cartCount,
+      cartCountLabel: cartCount === 1 ? "1 platillo" : cartCount + " platillos",
+      cartTotal: this.money(cartTotal),
+      hasCart,
+      waCart,
+      clearCart: () => this.clearCart(),
       reviews,
       reviewsLoop: reviews.concat(reviews),
     };
