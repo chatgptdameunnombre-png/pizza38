@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-<script src="https://fast.wistia.com/player.js" async></script>
-<script src="https://fast.wistia.com/embed/u1yoqei4eg.js" async type="module"></script>
-<script src="https://fast.wistia.com/embed/swqk85k69g.js" async type="module"></script>
 </head>
 <body>
 <x-dc>
@@ -134,11 +131,15 @@
         <div>
           <div data-r="vids" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div style="position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; background: #131110; border: 1px solid rgba(255,255,255,0.09);">
-              <wistia-player media-id="u1yoqei4eg" aspect="0.5625" autoplay="true" muted="true" silent-autoplay="true" end-video-behavior="loop" big-play-button="false" play-bar-control="false" play-pause-control="false" volume-control="false" fullscreen-control="false" settings-control="false" controls-visible-on-load="false" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; height:auto;"></wistia-player>
+              <video ref="{{ videoRef }}" loop muted playsinline preload="metadata" style="position:absolute; inset:0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="assets/reel.mp4" type="video/mp4">
+              </video>
               <span style="position:absolute; top:12px; left:14px; font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.45); padding:5px 10px; border-radius:6px;">@pizza38.gdl</span>
             </div>
             <div data-r="vid2" style="position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; background: #131110; border: 1px solid rgba(255,255,255,0.09);">
-              <wistia-player media-id="swqk85k69g" aspect="0.5625" autoplay="true" muted="true" silent-autoplay="true" end-video-behavior="loop" big-play-button="false" play-bar-control="false" play-pause-control="false" volume-control="false" fullscreen-control="false" settings-control="false" controls-visible-on-load="false" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; height:auto;"></wistia-player>
+              <video ref="{{ videoRef }}" loop muted playsinline preload="metadata" style="position:absolute; inset:0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="assets/reel2.mp4" type="video/mp4">
+              </video>
               <span style="position:absolute; top:12px; left:14px; font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.45); padding:5px 10px; border-radius:6px;">@pizza38.gdl</span>
             </div>
           </div>
@@ -608,6 +609,29 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+(function () {
+  function isReel(v) { return /reel\d*\.mp4/.test(v.currentSrc || v.querySelector('source') && v.querySelector('source').src || ''); }
+  function tick() {
+    var vh = window.innerHeight || 800;
+    document.querySelectorAll('video').forEach(function (v) {
+      if (!isReel(v)) return;
+      var r = v.getBoundingClientRect();
+      if (!r.height) return;
+      var inView = r.top < vh * 0.9 && r.bottom > vh * 0.1;
+      if (inView) {
+        if (v.paused) { v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      } else if (!v.paused) {
+        v.pause();
+      }
+    });
+  }
+  window.addEventListener('scroll', tick, { passive: true });
+  window.addEventListener('resize', tick, { passive: true });
+  setInterval(tick, 1000);
+  tick();
+})();
 </script>
 </body>
 </html>
