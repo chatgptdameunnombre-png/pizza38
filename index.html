@@ -50,6 +50,13 @@
     [data-r="contact"] { grid-template-columns: 1fr !important; }
     [data-r="apps"] { gap: 16px !important; }
   }
+  @media (min-width: 561px) and (max-width: 980px) {
+    [data-r="local"] > div:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 9 !important; }
+    [data-r="local"] > div:first-child img { object-position: center 20%; }
+  }
+  @media (min-width: 720px) and (max-width: 980px) {
+    [data-r="contact"] { grid-template-columns: 1fr 1fr !important; align-items: start; }
+  }
   @media (max-width: 560px) {
     [data-r="vids"] { grid-template-columns: 1fr !important; }
     [data-r="vid2"] { display: none !important; }
